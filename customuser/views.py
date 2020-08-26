@@ -21,13 +21,12 @@ def signin(request):
         if form.is_valid():
             data = form.cleaned_data
             user = authenticate(
-                request, username=data['username'], password=data['password']
-            )
+                request, username=data.get('username'),
+                password=data.get('password'))
         if user:
             login(request, user)
             return HttpResponseRedirect(
-                request.GET.get('next', reverse('home'))
-            )
+                request.GET.get('next', reverse('home')))
     form = SignInForm()
     return render(request, html, {'form': form})
 
@@ -40,11 +39,11 @@ def signout(request):
 def signup(request):
     html = 'generic_form.html'
 
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
+    if request.method == 'GET':
+        form = SignUpForm(request.GET)
         if form.is_valid():
             data = form.cleaned_data
-            user = MyUser.objects.create_user(
+            MyUser.objects.create_user(
                 username=data['username'],
                 password=data['password'],
                 display_name=data['display_name'],
